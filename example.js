@@ -1,14 +1,10 @@
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 const puppeteer = require('puppeteer');
 // const IMDB_URL = (movie_id) => `https://www.imdb.com/title/${movie_id}/`;
 // const MOVIE_ID = `tt6763664`;
 
 (async () => {
   /* Initiate the Puppeteer browser */
-  let url = 'https://www.flipkart.com/search?q=oppo%20&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off';
+  let url = 'https://www.flipkart.com/oppo-f19-pro-fluid-black-128-gb/p/itmf3153ba8dbf1a?pid=MOBGYV9VCE8G2SDV&lid=LSTMOBGYV9VCE8G2SDVKROOXV&marketplace=FLIPKART&q=oppo+&store=tyy%2F4io&srno=s_1_1&otracker=search&otracker1=search&fm=SEARCH&iid=44adc710-17ca-4a73-b331-c6d6658cfed3.MOBGYV9VCE8G2SDV.SEARCH&ppt=sp&ppn=sp&ssid=ux3pvux5rk0000001616478538251&qH=63f7e4df5c9ea040';
   const browser = await puppeteer.launch( {headless:false} );
   const page = await browser.newPage();
 
@@ -18,35 +14,23 @@ const puppeteer = require('puppeteer');
   /* Run javascript inside of the page */
   let data = await page.evaluate(() => {
 
-    let titleClass = document.querySelectorAll('._4rR01T');
-    let productPrice = document.querySelectorAll('._3tbKJL ._1_WHN1');
-    let productDescription = document.querySelectorAll('._1xgFaf');
-    let titles = [];
-    let price = [];
-    let description = [];
-
-    for(let i = 0; i < titleClass.length; i++) {
-      titles.push(titleClass[i].innerHTML);
-      price.push(productPrice[i].innerHTML);
-      description.push(productDescription[i].innerText);
-    }
+    let title = document.querySelector('span[class = "B_NuCI"]').innerText;
+    let rating = document.querySelector('div[class = "_3LWZlK"]').innerText;
+    let ratingCount = document.querySelector('span[class = "_2_R_DZ"] > span > span').innerText;
+    let reviewCount = document.querySelector('span[class = "_13vcmD"] ~ span').innerText;
 
     /* Returning an object filled with the scraped data */
     return {
-      titles,
-      price,
-      description
+      title,
+      rating,
+      ratingCount,
+      reviewCount
     }
-
 
   });
 
   /* Outputting what we scraped */
   console.log(data);
-  console.log(data.titles.length);
-
-  await sleep(5000);
 
   await browser.close();
 })();
-
